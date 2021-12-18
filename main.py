@@ -18,7 +18,7 @@ def main(window_x=1000, window_y=750):
 
 
     #scale of sim
-    number_of_animals = 10
+    number_of_animals = 12 #multiple de 4 sinn le plus proche du bas pris until fixed
     number_of_food_pieces = 8
     min_distance_from_food_px = 100
     
@@ -30,6 +30,8 @@ def main(window_x=1000, window_y=750):
 
     #spawns
     spawn_map = np.zeros((window_x,window_y))                   #spawn map array initialization
+    
+    
     for i in range (number_of_food_pieces):                     #food spawns
         temp_x = random_coordinate(window_x-4,1)
         temp_y = random_coordinate(window_y-4,1)
@@ -37,7 +39,48 @@ def main(window_x=1000, window_y=750):
         food_positions.append(temp_y)
         spawn_map[temp_x,temp_y]=1
     
+    
 
+    animal_start_positions = []
+    
+    #north side
+    for i in range (number_of_animals//4):
+         temp_coor = random_coordinate(window_x-1)
+         while spawn_map[temp_coor,0] == 2:       #checks no other animal there already
+            temp_coor = random_coordinate(window_x-1)
+         animal_start_positions.append((temp_coor,0))
+         spawn_map[temp_coor,0] = 2
+
+    #south side
+    for i in range (number_of_animals//4):
+         temp_coor = random_coordinate(window_x-1)
+         while spawn_map[temp_coor,window_y-1] == 2:       #checks no other animal there already
+            temp_coor = random_coordinate(window_x-1)
+         animal_start_positions.append((temp_coor,window_y-1))
+         spawn_map[temp_coor,window_y-1] = 2
+
+    #east side
+    for i in range (number_of_animals//4):
+         temp_coor = random_coordinate(window_y-1)
+         while spawn_map[0, temp_coor] == 2:       #checks no other animal there already
+            temp_coor = random_coordinate(window_y-1)
+         animal_start_positions.append((0,temp_coor))
+         spawn_map[0, temp_coor] = 2
+
+    #west side mf
+    for i in range (number_of_animals//4):
+         temp_coor = random_coordinate(window_y-1)
+         while spawn_map[window_y-1,temp_coor] == 2:       #checks no other animal there already
+            temp_coor = random_coordinate(window_y-1)
+         animal_start_positions.append((window_y-1,temp_coor))
+         spawn_map[window_y-1,temp_coor] = 2
+
+    print(animal_start_positions)
+    animal_start_positions_numpy = np.array(animal_start_positions)
+    print(animal_start_positions_numpy)
+        
+
+        
 
 
 
@@ -69,8 +112,12 @@ def main(window_x=1000, window_y=750):
                 run = False
 
         win.fill((255, 255, 255))
+
         for i in range (0, number_of_food_pieces*2-1, 2):
             pygame.draw.rect(win, (0, 255, 0), (food_positions[i], food_positions[i+1], 5, 5))
+
+        for i in range ((number_of_animals//4)*4):
+            pygame.draw.rect(win, (0, 0, 0), (animal_start_positions_numpy[i,0], animal_start_positions_numpy[i,1], 1, 1))
         
         pygame.display.update()
         
